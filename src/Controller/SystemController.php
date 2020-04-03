@@ -8,23 +8,12 @@
 
 namespace App\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-//use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
-class DefaultController
+class SystemController
 {
-    public function __construct()
-    {
-
-    }
-
-    public function index(): JsonResponse
+    public function healthcheck(): JsonResponse
     {
         return new JsonResponse([], Response::HTTP_NO_CONTENT);
     }
