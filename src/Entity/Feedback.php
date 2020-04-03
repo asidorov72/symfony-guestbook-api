@@ -107,14 +107,14 @@ class Feedback
     }
 
     public function toArray()
-{
-    return [
-        'id' => $this->getId(),
-        'date' => $this->getDate(),
-        'author' => $this->getAuthor(),
-        'email' => $this->getEmail(),
-        'title' => $this->getTitle(),
-        'message' => $this->getMesage()
-    ];
-}
+    {
+        return [
+            'id' => $this->getId(),
+            'date' => $this->getDate(),
+            'author' => $this->getAuthor(),
+            'email' => $this->getEmail(),
+            'title' => $this->getTitle(),
+            'message' => $this->getMesage()
+        ];
+    }
 }
