@@ -16,41 +16,37 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-//use Symfony\Component\Routing\Exception\RouteNotFoundException;
+use App\Validator\FeedbackRequestValidator;
 
 class FeedbackController
 {
     private $feedbackRepository;
 
-    public function __construct(FeedbackRepository $feedbackRepository)
+    public function __construct(
+        FeedbackRepository $feedbackRepository,
+        FeedbackRequestValidator $feedbackRequestValidator
+    )
     {
-        $this->feedbackRepository = $feedbackRepository;
+        $this->feedbackRepository       = $feedbackRepository;
+        $this->feedbackRequestValidator = $feedbackRequestValidator;
     }
 
-    /**
-     * @Route("/feedback/add", name="add_feedback", methods={"POST"})
-     */
     public function add(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
+        $payload = json_decode($request->getContent(), true);
 
-        die('ХУЙ');
+        try {
+            $this->feedbackRequestValidator->validate($payload);
+        } catch (\Exception $e) {
+            return new JsonResponse(['errorMessage' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
 
-//        $firstName = $data['firstName'];
-//        $lastName = $data['lastName'];
-//        $email = $data['email'];
-//        $phoneNumber = $data['phoneNumber'];
-//
-//        if (empty($firstName) || empty($lastName) || empty($email) || empty($phoneNumber)) {
-//            return new JsonResponse(['status' => 'Empty parameters were given!'], Response::HTTP_BAD_REQUEST);
-//        }
-//
-//        try{
-//            $this->customerRepository->saveCustomer($firstName, $lastName, $email, $phoneNumber);
-//        } catch(\Exception $e) {
-//            return new JsonResponse(['status' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-//        }
-//
-//        return new JsonResponse(['status' => 'Customer created!'], Response::HTTP_CREATED);
+        try{
+            $this->feedbackRepository->saveFeedback($payload);
+        } catch(\Exception $e) {
+            return new JsonResponse(['status' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
+
+        return new JsonResponse(['status' => 'Feedback was created!'], Response::HTTP_CREATED);
     }
 }

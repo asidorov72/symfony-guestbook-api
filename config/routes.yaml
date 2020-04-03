@@ -6,3 +6,7 @@ healthcheck:
     path: /healthcheck
     controller: App\Controller\SystemController::healthcheck
     methods: GET
+add_feedback:
+    path: /feedback/add
+    controller: App\Controller\FeedbackController::add
+    methods: POST
