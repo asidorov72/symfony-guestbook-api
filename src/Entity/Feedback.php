@@ -17,11 +17,6 @@ class Feedback
     private $id;
 
     /**
-     * @ORM\Column(type="datetime")
-     */
-    private $date;
-
-    /**
      * @ORM\Column(type="string", length=100)
      */
     private $author;
@@ -41,21 +36,14 @@ class Feedback
      */
     private $email;
 
+    /**
+     * string
+     */
+    public const AUTHOR_GUEST = 'Guest';
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getDate(): ?\DateTimeInterface
-    {
-        return $this->date;
-    }
-
-    public function setDate(\DateTimeInterface $date): self
-    {
-        $this->date = $date;
-
-        return $this;
     }
 
     public function getAuthor(): ?string
@@ -107,14 +95,14 @@ class Feedback
     }
 
     public function toArray()
-{
-    return [
-        'id' => $this->getId(),
-        'date' => $this->getDate(),
-        'author' => $this->getAuthor(),
-        'email' => $this->getEmail(),
-        'title' => $this->getTitle(),
-        'message' => $this->getMesage()
-    ];
-}
+    {
+        return [
+            'id' => $this->getId(),
+            'date' => $this->getDate(),
+            'author' => $this->getAuthor(),
+            'email' => $this->getEmail(),
+            'title' => $this->getTitle(),
+            'message' => $this->getMesage()
+        ];
+    }
 }
