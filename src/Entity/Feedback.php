@@ -17,6 +17,11 @@ class Feedback
     private $id;
 
     /**
+     * @ORM\Column(type="string", length=50)
+     */
+    private $date;
+
+    /**
      * @ORM\Column(type="string", length=100)
      */
     private $author;
@@ -44,6 +49,18 @@ class Feedback
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getDate(): ?string
+    {
+        return $this->date;
+    }
+
+    public function setDate(string $date): self
+    {
+        $this->date = $date;
+
+        return $this;
     }
 
     public function getAuthor(): ?string

@@ -6,6 +6,7 @@ use App\Entity\Feedback;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Helpers\DatetimeHelper;
 
 /**
  * @method Feedback|null find($id, $lockMode = null, $lockVersion = null)
@@ -33,9 +34,11 @@ class FeedbackRepository extends ServiceEntityRepository
 
         empty($data['title']) ? true : $feedbackEntity->setTitle($data['title']);
 
+        $date   = DatetimeHelper::getCurrentDatetime();
         $author = empty($data['author']) ? Feedback::AUTHOR_GUEST : $data['author'];
 
-        $feedbackEntity->setAuthor($author)
+        $feedbackEntity->setDate($date)
+            ->setAuthor($author)
             ->setEmail($data['email'])
             ->setMessage($data['message']);
 
@@ -47,37 +50,21 @@ class FeedbackRepository extends ServiceEntityRepository
         }
     }
 
-
-
-
-
-
-    // /**
-    //  * @return Feedback[] Returns an array of Feedback objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findLastMessages(array $criteria, int $max = 0)
     {
-        return $this->createQueryBuilder('f')
-            ->andWhere('f.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('f.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $gb = $this->createQueryBuilder('f');
 
-    /*
-    public function findOneBySomeField($value): ?Feedback
-    {
-        return $this->createQueryBuilder('f')
-            ->andWhere('f.exampleField = :val')
-            ->setParameter('val', $value)
+        foreach($criteria as $index => $word) {
+            $gb->orWhere("f.message NOT LIKE :msg$index")
+                ->setParameter("msg$index", '%' . $word . '%');
+        }
+
+        if ($max > 0) {
+            $gb->setMaxResults($max);
+        }
+
+        return $gb->orderBy('f.date', 'desc')
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getResult();
     }
-    */
 }

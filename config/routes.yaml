@@ -7,6 +7,10 @@ healthcheck:
     controller: App\Controller\SystemController::healthcheck
     methods: GET
 add_feedback:
-    path: /feedback/add
+    path: /feedback
     controller: App\Controller\FeedbackController::add
     methods: POST
+list_feedback:
+    path: /feedback
+    controller: App\Controller\FeedbackController::list
+    methods: GET

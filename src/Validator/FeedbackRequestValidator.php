@@ -33,13 +33,17 @@ class FeedbackRequestValidator
         $emailConstraint->message = 'Invalid email address';
 
         // use the validator to validate the value
-        $errors[] = $this->validator->validate(
+        $emailErrors = $this->validator->validate(
             $array['email'],
             $emailConstraint
         );
 
         if (empty($array['email'])) {
             $errors[] = 'The field "email" is required.';
+        } else {
+            if (0 < count($emailErrors)) {
+                $errors[] = $emailErrors;
+            }
         }
 
         if (empty($array['message'])) {
