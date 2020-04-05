@@ -8,77 +8,35 @@
 
 namespace App\Controller;
 
-use App\Repository\FeedbackRepository;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Validator\FeedbackRequestValidator;
+use App\Services\FeedbackCreateService;
+use App\Services\FeedbackShowService;
 
 class FeedbackController
 {
-    private $feedbackRepository;
+    private $feedbackCreateService;
 
-    private const EXCLUDE_WORDS_ARRAY = ['test1', 'test2'];
+    private $feedbackShowService;
 
     public function __construct(
-        FeedbackRepository $feedbackRepository,
-        FeedbackRequestValidator $feedbackRequestValidator
+        FeedbackCreateService $feedbackCreateService,
+        FeedbackShowService $feedbackShowService
     )
     {
-        $this->feedbackRepository       = $feedbackRepository;
-        $this->feedbackRequestValidator = $feedbackRequestValidator;
+        $this->feedbackCreateService = $feedbackCreateService;
+        $this->feedbackShowService   = $feedbackShowService;
     }
 
     public function add(Request $request): JsonResponse
     {
         $payload = json_decode($request->getContent(), true);
 
-        try {
-            $this->feedbackRequestValidator->validate($payload);
-        } catch (\Exception $e) {
-            return new JsonResponse(['errorMessage' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        }
-
-        try{
-            $this->feedbackRepository->saveFeedback($payload);
-        } catch(\Exception $e) {
-            return new JsonResponse(['errorMessage' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        }
-
-        return new JsonResponse(['status' => 'Feedback was created!'], Response::HTTP_CREATED);
+        return $this->feedbackCreateService->create($payload);
     }
 
     public function list(): JsonResponse
     {
-        try {
-            $feedbackList = $this->feedbackRepository->findMessages(
-                [
-                    'exclude' => self::EXCLUDE_WORDS_ARRAY,
-                    'orderBy' => ['field' => 'date', 'order' => 'desc'],
-                    'limit' => 10
-                ]
-            );
-        } catch(\Exception $e) {
-            return new JsonResponse(['errorMessage' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        }
-
-        if (empty($feedbackList)) {
-            return new JsonResponse(['errorMessage' => 'Nothing was found.'], Response::HTTP_BAD_REQUEST);
-        }
-
-        $data = [];
-
-        foreach ($feedbackList as $feedback) {
-            $data[] = [
-                'id' => $feedback->getId(),
-                'date' => $feedback->getDate(),
-                'author' => $feedback->getAuthor(),
-                'email' => $feedback->getEmail(),
-                'title' => $feedback->getTitle(),
-                'message' => $feedback->getMessage(),
-            ];
-        }
-
-        return new JsonResponse($data, Response::HTTP_OK);
+        return  $this->feedbackShowService->show();
     }
 }
