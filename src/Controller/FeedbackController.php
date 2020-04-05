@@ -42,7 +42,7 @@ class FeedbackController
         try{
             $this->feedbackRepository->saveFeedback($payload);
         } catch(\Exception $e) {
-            return new JsonResponse(['status' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['errorMessage' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
 
         return new JsonResponse(['status' => 'Feedback was created!'], Response::HTTP_CREATED);
@@ -59,11 +59,11 @@ class FeedbackController
                 ]
             );
         } catch(\Exception $e) {
-            return new JsonResponse(['status' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['errorMessage' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
 
         if (empty($feedbackList)) {
-            return new JsonResponse(['status' => 'Nothing was found'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['errorMessage' => 'Nothing was found.'], Response::HTTP_BAD_REQUEST);
         }
 
         $data = [];
