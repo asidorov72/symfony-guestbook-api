@@ -1,0 +1,163 @@
+openapi: "3.0.2"
+
+servers:
+  - url: "http://symfony-guestbook-api/"
+
+info:
+  title: "Symfony Guestbook REST Api. Test task for Xoomworks"
+  description: |-
+    Using recent version of Symfony framework build a REST API for Guestbook Application where people can leave their feedback about virtual restaurant.
+    It should have 2 endpoints:
+    1.	POST /feedback - should accept json object and save it to persistence layer. You can use database or maybe just a file, does not matter.
+    2.	GET /feedback - should return the last 10 “feedback” objects saved if they do not contain the word “test1” or “test2”
+    There is no need of authorization, authentication, user management.
+    The solution must include Dockerfile.
+    *If the solution uses third party software (such as relational database, e.g. MySQL) there should be docker-compose.yaml file.
+    *Bonus points for unit and integration tests.
+  version: "1.0.0"
+
+externalDocs:
+  description: |-
+    Find Symfony documentation here
+  url: "https://symfony.com/doc/current/index.html#gsc.tab=0"
+
+tags:
+  - name: "check"
+    description: "Check endpoints"
+
+paths:
+  # Check
+  /:
+    get:
+      tags:
+        - "check"
+      parameters:
+        - name: index
+          description: |-
+            Test index page
+          in: path
+          required: true
+          example:
+          schema:
+            type: string
+
+      summary: |-
+        Forbidden index page
+      responses:
+        "404":
+          description: "Successful response"
+
+  /healthcheck:
+    get:
+      tags:
+        - "check"
+      summary: |-
+        Checks if the application is accessable
+      responses:
+        "204":
+          description: "Successful response. No content"
+
+        "500":
+          description: "Server Error"
+
+  /feedback:
+    post:
+      tags:
+        - "check"
+      parameters:
+        - name: Accept
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+      summary: |-
+        Add feedback to the Guestbook Api
+      requestBody:
+        description: |-
+          JSON string posted from the Drop-in form
+        content:
+          "application/json":
+            schema:
+              type: object
+              example:
+                {
+                  "title" : "Страхотно изкарахме!",
+	                "author": "Miglena Georgieva",
+	                "message": "Lorem ipsum dolor sit amet, consectetur adipiscing.",
+	                "email": "m.georgieva@dir.bg"
+                }
+      responses:
+        "200":
+          description: |-
+            The Service will respond with HTTP code 200 and a json
+          content:
+            application/json:
+              examples:
+                success:
+                  value: {
+                    "status": "Feedback was created!"
+                  }
+        "400":
+          description: "Exception was thrown. Errors can be different: mysql, data validation etc."
+          content:
+            application/json:
+              examples:
+                exception:
+                  value: {
+                    "errorMessage": "m.georgieva@dirbg:\n    Invalid email address (code bd79c0ab-ddba-46cc-a703-a7a4b08de310)\n"
+                  }
+
+  /feedback/:
+    get:
+      tags:
+        - "check"
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+      summary: |-
+        Get 10 latest feedbacks
+
+      responses:
+        "200":
+          description: |-
+            The Service will respond with HTTP code 200 and a json
+          content:
+            application/json:
+              examples:
+                success:
+                  value: [
+                      {
+                        "id": 35,
+                        "date": "2020-04-05 13:50:41",
+                        "author": "Guest",
+                        "email": null,
+                        "title": null,
+                        "message": "Oh... yeah!!!! Very bright rooms!!!!"
+                      },
+                      {
+                        "id": 34,
+                        "date": "2020-04-05 13:50:35",
+                        "author": "Guest",
+                        "email": null,
+                        "title": null,
+                        "message": "Oh... yeah!!!! Very bad rooms!!!!"
+                      }
+                    ]
+
+        "400":
+          description: "Exception was thrown. Errors can be different: mysql, data validation etc."
+          content:
+            application/json:
+              examples:
+                exception:
+                  value: {
+                    "errorMessage": "Nothing was found."
+                  }
