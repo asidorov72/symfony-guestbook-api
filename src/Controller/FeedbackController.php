@@ -50,7 +50,17 @@ class FeedbackController
 
     public function list(): JsonResponse
     {
-        $feedbackList = $this->feedbackRepository->findLastMessages(self::EXCLUDE_WORDS_ARRAY, 10);
+        try {
+            $feedbackList = $this->feedbackRepository->findMessages(
+                [
+                    'exclude' => self::EXCLUDE_WORDS_ARRAY,
+                    'orderBy' => ['field' => 'date', 'order' => 'desc'],
+                    'limit' => 10
+                ]
+            );
+        } catch(\Exception $e) {
+            return new JsonResponse(['status' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
 
         if (empty($feedbackList)) {
             return new JsonResponse(['status' => 'Nothing was found'], Response::HTTP_BAD_REQUEST);

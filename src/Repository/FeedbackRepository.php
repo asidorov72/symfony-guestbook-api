@@ -33,15 +33,14 @@ class FeedbackRepository extends ServiceEntityRepository
         $feedbackEntity = new Feedback();
 
         empty($data['title']) ? true : $feedbackEntity->setTitle($data['title']);
+        empty($data['email']) ? true : $feedbackEntity->setEmail($data['email']);
 
         $date   = DatetimeHelper::getCurrentDatetime();
         $author = empty($data['author']) ? Feedback::AUTHOR_GUEST : $data['author'];
 
         $feedbackEntity->setDate($date)
             ->setAuthor($author)
-            ->setEmail($data['email'])
             ->setMessage($data['message']);
-
         try{
             $this->manager->persist($feedbackEntity);
             $this->manager->flush();
@@ -50,21 +49,32 @@ class FeedbackRepository extends ServiceEntityRepository
         }
     }
 
-    public function findLastMessages(array $criteria, int $max = 0)
+    public function findMessages(array $criteria)
     {
+        if (empty($criteria['exclude'])) {
+            return $this->findAll();
+        }
+
         $gb = $this->createQueryBuilder('f');
 
-        foreach($criteria as $index => $word) {
-            $gb->orWhere("f.message NOT LIKE :msg$index")
-                ->setParameter("msg$index", '%' . $word . '%');
+        if (!empty($criteria['exclude'])) {
+            foreach($criteria['exclude'] as $index => $word) {
+                $gb->andWhere("f.message NOT LIKE :msg$index")
+                    ->setParameter("msg$index", '%' . $word . '%');
+            }
         }
 
-        if ($max > 0) {
-            $gb->setMaxResults($max);
+        if ($criteria['limit'] > 0) {
+            $gb->setMaxResults($criteria['limit']);
         }
 
-        return $gb->orderBy('f.date', 'desc')
-            ->getQuery()
-            ->getResult();
+        $gb->orderBy( 'f.' . $criteria['orderBy']['field'], $criteria['orderBy']['order']);
+
+        try {
+            return $gb->getQuery()
+                ->getResult();
+        } catch(\Exception $e) {
+            throw new \Exception($e->getMessage(), $e->getCode(), $e->getPrevious());
+        }
     }
 }

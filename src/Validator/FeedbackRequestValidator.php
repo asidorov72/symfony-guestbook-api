@@ -19,6 +19,8 @@ class FeedbackRequestValidator
 {
     private $validator;
 
+    private const MESSAGE_FIELD_MAX_LENGTH = 2000;
+
     public function __construct(ValidatorInterface $validator)
     {
         $this->validator = $validator;
@@ -28,19 +30,17 @@ class FeedbackRequestValidator
     {
         $errors = [];
 
-        $emailConstraint = new Assert\Email();
-        // all constraint "options" can be set this way
-        $emailConstraint->message = 'Invalid email address';
-
         // use the validator to validate the value
-        $emailErrors = $this->validator->validate(
-            $array['email'],
-            $emailConstraint
-        );
+        if (!empty($array['email'])) {
+            $emailConstraint = new Assert\Email();
+            // all constraint "options" can be set this way
+            $emailConstraint->message = 'Invalid email address';
 
-        if (empty($array['email'])) {
-            $errors[] = 'The field "email" is required.';
-        } else {
+            $emailErrors = $this->validator->validate(
+                $array['email'],
+                $emailConstraint
+            );
+
             if (0 < count($emailErrors)) {
                 $errors[] = $emailErrors;
             }
@@ -48,6 +48,8 @@ class FeedbackRequestValidator
 
         if (empty($array['message'])) {
             $errors[] = 'The field "message" is required.';
+        } elseif (strlen($array['message']) > self::MESSAGE_FIELD_MAX_LENGTH) {
+            $errors[] = 'The field "message" text is too long.';
         }
 
         if (!empty($errors)) {
