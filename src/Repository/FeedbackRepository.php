@@ -6,6 +6,7 @@ use App\Entity\Feedback;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Helpers\DatetimeHelper;
 
 /**
  * @method Feedback|null find($id, $lockMode = null, $lockVersion = null)
@@ -32,13 +33,14 @@ class FeedbackRepository extends ServiceEntityRepository
         $feedbackEntity = new Feedback();
 
         empty($data['title']) ? true : $feedbackEntity->setTitle($data['title']);
+        empty($data['email']) ? true : $feedbackEntity->setEmail($data['email']);
 
+        $date   = DatetimeHelper::getCurrentDatetime();
         $author = empty($data['author']) ? Feedback::AUTHOR_GUEST : $data['author'];
 
-        $feedbackEntity->setAuthor($author)
-            ->setEmail($data['email'])
+        $feedbackEntity->setDate($date)
+            ->setAuthor($author)
             ->setMessage($data['message']);
-
         try{
             $this->manager->persist($feedbackEntity);
             $this->manager->flush();
@@ -47,37 +49,32 @@ class FeedbackRepository extends ServiceEntityRepository
         }
     }
 
-
-
-
-
-
-    // /**
-    //  * @return Feedback[] Returns an array of Feedback objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findMessages(array $criteria)
     {
-        return $this->createQueryBuilder('f')
-            ->andWhere('f.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('f.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        if (empty($criteria['exclude'])) {
+            return $this->findAll();
+        }
 
-    /*
-    public function findOneBySomeField($value): ?Feedback
-    {
-        return $this->createQueryBuilder('f')
-            ->andWhere('f.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $gb = $this->createQueryBuilder('f');
+
+        if (!empty($criteria['exclude'])) {
+            foreach($criteria['exclude'] as $index => $word) {
+                $gb->andWhere("f.message NOT LIKE :msg$index")
+                    ->setParameter("msg$index", '%' . $word . '%');
+            }
+        }
+
+        if ($criteria['limit'] > 0) {
+            $gb->setMaxResults($criteria['limit']);
+        }
+
+        $gb->orderBy( 'f.' . $criteria['orderBy']['field'], $criteria['orderBy']['order']);
+
+        try {
+            return $gb->getQuery()
+                ->getResult();
+        } catch(\Exception $e) {
+            throw new \Exception($e->getMessage(), $e->getCode(), $e->getPrevious());
+        }
     }
-    */
 }

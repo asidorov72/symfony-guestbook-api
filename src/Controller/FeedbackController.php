@@ -12,15 +12,13 @@ use App\Repository\FeedbackRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Validator\FeedbackRequestValidator;
 
 class FeedbackController
 {
     private $feedbackRepository;
+
+    private const EXCLUDE_WORDS_ARRAY = ['test1', 'test2'];
 
     public function __construct(
         FeedbackRepository $feedbackRepository,
@@ -48,5 +46,39 @@ class FeedbackController
         }
 
         return new JsonResponse(['status' => 'Feedback was created!'], Response::HTTP_CREATED);
+    }
+
+    public function list(): JsonResponse
+    {
+        try {
+            $feedbackList = $this->feedbackRepository->findMessages(
+                [
+                    'exclude' => self::EXCLUDE_WORDS_ARRAY,
+                    'orderBy' => ['field' => 'date', 'order' => 'desc'],
+                    'limit' => 10
+                ]
+            );
+        } catch(\Exception $e) {
+            return new JsonResponse(['status' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
+
+        if (empty($feedbackList)) {
+            return new JsonResponse(['status' => 'Nothing was found'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $data = [];
+
+        foreach ($feedbackList as $feedback) {
+            $data[] = [
+                'id' => $feedback->getId(),
+                'date' => $feedback->getDate(),
+                'author' => $feedback->getAuthor(),
+                'email' => $feedback->getEmail(),
+                'title' => $feedback->getTitle(),
+                'message' => $feedback->getMessage(),
+            ];
+        }
+
+        return new JsonResponse($data, Response::HTTP_OK);
     }
 }

@@ -17,7 +17,12 @@ class Feedback
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=50)
+     */
+    private $date;
+
+    /**
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $author;
 
@@ -27,12 +32,12 @@ class Feedback
     private $title;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="text")
      */
     private $message;
 
     /**
-     * @ORM\Column(type="string", length=50)
+     * @ORM\Column(type="string", length=50, nullable=true)
      */
     private $email;
 
@@ -44,6 +49,18 @@ class Feedback
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getDate(): ?string
+    {
+        return $this->date;
+    }
+
+    public function setDate(string $date): self
+    {
+        $this->date = $date;
+
+        return $this;
     }
 
     public function getAuthor(): ?string
