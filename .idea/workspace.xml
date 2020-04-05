@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="79186067-3015-4f97-8dc9-9bdc21568e4c" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/Migrations/Version20200404102923.php" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/Migrations/Version20200404102923.php" afterPath="$PROJECT_DIR$/src/Migrations/Version20200405122248.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Controller/FeedbackController.php" afterPath="$PROJECT_DIR$/src/Controller/FeedbackController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Entity/Feedback.php" afterPath="$PROJECT_DIR$/src/Entity/Feedback.php" />
@@ -436,7 +436,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="0" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2510981" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
