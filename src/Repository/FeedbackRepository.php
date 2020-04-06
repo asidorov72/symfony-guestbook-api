@@ -57,16 +57,12 @@ class FeedbackRepository extends ServiceEntityRepository
 
         $gb = $this->createQueryBuilder('f');
 
-        if (!empty($criteria['exclude'])) {
-            foreach($criteria['exclude'] as $index => $word) {
-                $gb->andWhere("f.message NOT LIKE :msg$index")
-                    ->setParameter("msg$index", '%' . $word . '%');
-            }
+        foreach($criteria['exclude'] as $index => $word) {
+            $gb->andWhere("f.message NOT LIKE :msg$index")
+                ->setParameter("msg$index", '%' . $word . '%');
         }
 
-        if ($criteria['limit'] > 0) {
-            $gb->setMaxResults($criteria['limit']);
-        }
+        ($criteria['limit'] === 0) ? true : $gb->setMaxResults($criteria['limit']);
 
         $gb->orderBy( 'f.' . $criteria['orderBy']['field'], $criteria['orderBy']['order']);
 

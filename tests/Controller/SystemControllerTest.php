@@ -6,7 +6,6 @@
  * Time: 11:25
  */
 
-// tests/Controller/PostControllerTest.php
 namespace App\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -20,5 +19,14 @@ class SystemControllerTest extends WebTestCase
         $client->request('GET', '/healthcheck');
 
         $this->assertEquals(204, $client->getResponse()->getStatusCode());
+    }
+
+    public function testHealthcheckNotFoundGet()
+    {
+        $client = static::createClient();
+
+        $client->request('GET', '/healthcheck_');
+
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
     }
 }

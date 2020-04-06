@@ -19,7 +19,7 @@ class FeedbackRequestValidator
 {
     private $validator;
 
-    private const MESSAGE_FIELD_MAX_LENGTH = 2000;
+    public const MESSAGE_FIELD_MAX_LENGTH = 2000;
 
     public function __construct(ValidatorInterface $validator)
     {
@@ -31,25 +31,34 @@ class FeedbackRequestValidator
         $errors = [];
 
         // use the validator to validate the value
-        if (!empty($array['email'])) {
-            $emailConstraint = new Assert\Email();
-            // all constraint "options" can be set this way
-            $emailConstraint->message = 'Invalid email address';
+        $emailConstraint = new Assert\Email();
+        // all constraint "options" can be set this way
+        $emailConstraint->message = 'Invalid email address';
 
-            $emailErrors = $this->validator->validate(
-                $array['email'],
-                $emailConstraint
-            );
+        $emailErrors = $this->validator->validate(
+            $array['email'],
+            $emailConstraint
+        );
 
-            if (0 < count($emailErrors)) {
-                $errors[] = $emailErrors;
-            }
+        if (0 < count($emailErrors)) {
+            $errors[] = $emailErrors;
         }
 
-        if (empty($array['message'])) {
-            $errors[] = 'The field "message" is required.';
-        } elseif (strlen($array['message']) > self::MESSAGE_FIELD_MAX_LENGTH) {
-            $errors[] = 'The field "message" text is too long.';
+        $msgConstraint = new Assert\Length([
+            'min' => 10,
+            'max' => self::MESSAGE_FIELD_MAX_LENGTH,
+            'minMessage' => 'Your message must be at least {{ limit }} characters long',
+            'maxMessage' => 'Your message cannot be longer than {{ limit }} characters',
+            'allowEmptyString' => false,
+        ]);
+
+        $msgErrors = $this->validator->validate(
+            $array['message'],
+            $msgConstraint
+        );
+
+        if (0 < count($msgErrors)) {
+            $errors[] = $msgErrors;
         }
 
         if (!empty($errors)) {

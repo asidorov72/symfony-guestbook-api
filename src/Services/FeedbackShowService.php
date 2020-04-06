@@ -15,7 +15,7 @@ use Psr\Log\LoggerInterface;
 
 class FeedbackShowService
 {
-    private const EXCLUDE_WORDS_ARRAY = ['test1', 'test2'];
+    public const EXCLUDE_WORDS_ARRAY = ['test1', 'test2'];
 
     private $feedbackRepository;
 

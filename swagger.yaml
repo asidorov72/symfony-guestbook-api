@@ -92,7 +92,7 @@ paths:
 	                "email": "m.georgieva@dir.bg"
                 }
       responses:
-        "200":
+        "201":
           description: |-
             The Service will respond with HTTP code 200 and a json
           content:
