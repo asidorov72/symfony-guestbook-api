@@ -13,7 +13,7 @@ use \DateTimeZone;
 
 class DatetimeHelper
 {
-    private const LOCAL_TIMEZONE = 'Europe/Sofia';
+    public const LOCAL_TIMEZONE = 'Europe/Sofia';
 
     public static function getCurrentDatetime()
     {
