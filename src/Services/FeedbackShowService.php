@@ -13,9 +13,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @codeCoverageIgnore
+ */
 class FeedbackShowService
 {
-    private const EXCLUDE_WORDS_ARRAY = ['test1', 'test2'];
+    public const EXCLUDE_WORDS_ARRAY = ['test1', 'test2'];
 
     private $feedbackRepository;
 
