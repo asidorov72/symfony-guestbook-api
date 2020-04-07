@@ -28,7 +28,7 @@ class FeedbackRepository extends ServiceEntityRepository
         $this->manager = $manager;
     }
 
-    public function saveFeedback(array $data)
+    public function saveFeedback(array $data) : bool
     {
         $feedbackEntity = new Feedback();
 
@@ -41,15 +41,17 @@ class FeedbackRepository extends ServiceEntityRepository
         $feedbackEntity->setDate($date)
             ->setAuthor($author)
             ->setMessage($data['message']);
+
         try{
             $this->manager->persist($feedbackEntity);
             $this->manager->flush();
+            return true;
         } catch(\Exception $e) {
             throw new \Exception($e->getMessage(), $e->getCode(), $e->getPrevious());
         }
     }
 
-    public function findMessages(array $criteria)
+    public function findMessages(array $criteria) : array
     {
         if (empty($criteria['exclude'])) {
             return $this->findAll();

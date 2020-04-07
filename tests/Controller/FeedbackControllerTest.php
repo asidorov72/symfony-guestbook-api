@@ -9,6 +9,7 @@
 namespace App\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Services\FeedbackShowService;
 
 class FeedbackControllerTest extends WebTestCase
 {
@@ -21,6 +22,16 @@ class FeedbackControllerTest extends WebTestCase
         $response = $client->getResponse()->getContent();
 
         $responseArray = json_decode($response, true);
+
+        $ecludeArr   = FeedbackShowService::EXCLUDE_WORDS_ARRAY;
+
+        // Check if the answer contains 'test1' or 'test2'
+        foreach($responseArray as $singleFeedback) {
+            foreach($ecludeArr as $word) {
+                $strPosInt = strpos($singleFeedback['message'], $word);
+            }
+            $this->assertFalse($strPosInt);
+        }
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertArrayHasKey('id', $responseArray[0]);

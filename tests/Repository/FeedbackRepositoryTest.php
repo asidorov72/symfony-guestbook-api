@@ -55,6 +55,21 @@ class FeedbackRepositoryTest extends KernelTestCase
         $this->assertGreaterThan(1, $feedbackList);
     }
 
+    public function testSaveFeedback()
+    {
+        $pathToFile  = __DIR__ . "/../../tests/testing/json/add_feedback_payload.json";
+        $payloadJson = file_get_contents($pathToFile);
+        $payload     = json_decode($payloadJson, true);
+
+        $res = $feedbackList = $this->entityManager
+            ->getRepository(Feedback::class)
+            ->saveFeedback($payload);
+
+        $this->assertTrue($res);
+    }
+
+
+
     /**
      * {@inheritDoc}
      */

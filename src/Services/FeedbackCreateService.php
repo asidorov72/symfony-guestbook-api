@@ -14,6 +14,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Validator\FeedbackRequestValidator;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @codeCoverageIgnore
+ */
 class FeedbackCreateService
 {
     private $feedbackRepository;
