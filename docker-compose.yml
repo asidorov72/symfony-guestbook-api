@@ -1,0 +1,37 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile
+    image: symfony-docker
+    ports:
+      - 8080:80
+    volumes:
+      - .:/srv/app
+    links:
+      - mysql
+#      - redis
+    environment:
+      DB_HOST: localhost
+      DB_DATABASE: symfony_guestbook_api
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      DATABASE_URL: mysql://root:root@localhost:3306/symfony_guestbook_api?serverVersion=8.0.18
+#      REDIS_HOST: redis
+#      SESSION_DRIVER: redis
+#      CACHE_DRIVER: redis
+  mysql:
+    image: mysql:8.0.18
+    ports:
+      - 13306:3306
+    environment:
+      MYSQL_DATABASE: symfony_guestbook_api
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE_URL: mysql://root:root@localhost:3306/symfony_guestbook_api?serverVersion=8.0.18
+#  redis:
+#    image: redis:4.0-alpine
+#    ports:
+#      - 16379:6379
