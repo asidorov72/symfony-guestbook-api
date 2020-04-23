@@ -4,7 +4,7 @@ servers:
   - url: "http://symfony-guestbook-api/"
 
 info:
-  title: "Symfony Guestbook REST Api. Test task for Xoomworks"
+  title: "Symfony Guestbook REST Api. Test task for demo"
   description: |-
     Using recent version of Symfony framework build a REST API for Guestbook Application where people can leave their feedback about virtual restaurant.
     It should have 2 endpoints:
